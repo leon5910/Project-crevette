@@ -67,12 +67,6 @@ class Application(Frame):
                 self.columnconfigure(1, weight=3)
                 self.columnconfigure(2, weight=3)
 
-
-                # connect RX label
-                self.B10 = StringVar()
-                #Timer entry
-                self.Timer_entry_B1_D1 = StringVar()
-
                 self.createWidgets()
                 self.pack()
                 self.B10.set("Connect RX")
@@ -80,51 +74,6 @@ class Application(Frame):
 
 ####################################################################### CREATE DISPLAY ########################################################################################
 ####################################################################### CREATE DISPLAY ########################################################################################
-
-
-        def connect(self):
-
-                    connected = []
-
-                    global com_port_connected
-                    global arduinoData
-                                
-                    if sys.platform.startswith('win'):
-                        for element in comlist:
-                            connected.append(element.device)
-                            #C1.set(str("RX connected"))
-                            self.B10.set("Connecting...")
-                            global com_port_connected
-                            com_port_connected = True
-                            print(element.device)
-                            global arduinoData
-                            arduinoData = serial.Serial(element.device, 115200)  #Creating our serial object named arduinoData
-                            self.measure()
-                            print(com_port_connected)
-                    
-                    else:
-                            raise EnvironmentError('Unsupported platform')
-
-                            
-                            if sys.platform.startswith('win'):
-                                for element in comlist:
-                                    connected.append(element.device)
-                                    C1.set(str("RX connected"))
-                                    self.B10.set("Connecting...")
-                                    global com_port_connected
-                                    com_port_connected = True
-                                    print(element.device)
-                                    global arduinoData
-                                    arduinoData = serial.Serial(element.device, 115200)  #Creating our serial object named arduinoData
-                                    self.measure()
-                                    print(com_port_connected)
-                                    Y.destroy()
-                            
-                            else:
-                                  raise EnvironmentError('Unsupported platform')
-
-
-                    Y.Setting_page_title = Label(Y, text="Com port settings", font=('Verdana', 30), fg="red", bg="black").grid(row=0, column=5, sticky="nsew")
 
                   
         def createWidgets(self):
@@ -239,82 +188,7 @@ class Application(Frame):
                       
                             
                         if sys.platform.startswith('win') and a > 73 and a < 75:#74
-                            print(a)
-
-                            try:
-                                b = sys.getsizeof(aaa[0]) 
-                            except:
-                                print("data not correctly formatted")
-
-                            if b > 33 and b < 35: #34
-                                print(b,end=" ")
-                                print("aaa[0]",end=" ")
-                                print(aaa[0])
-                                do = True
-
-    
-                            try:
-                                c = sys.getsizeof(aaa[1])
-                            except:
-                                print("data not correctly formatted")
-
-                            if c > 25 and c < 28: #27
-                                print(c,end=" ")
-                                print("aaa[1]",end=" ")
-                                print(aaa[1])
-                                re = True
-
-
-                            try:
-                                d = sys.getsizeof(aaa[2])
-                            except:
-                                print("data not correctly formatted")
-
-                            if d > 28 and d < 31: #30
-                                print(d,end=" ")
-                                print("aaa[2]",end=" ")
-                                print(aaa[2])
-                                mi = True
-
-                            try:
-                                e = sys.getsizeof(aaa[3])
-                            except:
-                                print("data not correctly formatted")
-
-                            if e > 31 and e < 34: #33
-                                print(e,end=" ")
-                                print("aaa[3]",end=" ")
-                                print(aaa[3])
-                                fa = True
-
-                            try:
-                                f = sys.getsizeof(aaa[4])
-                            except:
-                                print("data not correctly formatted")
-
-                            #if f > 32 and g < 35: #33
-                            print(f,end=" ")
-                            print("aaa[4]",end=" ")
-                            print(aaa[4])
-                            so = True
-
-                            try:
-                                g = sys.getsizeof(aaa[5])
-                            except:
-                                print("data not correctly formatted")
-
-                            if g > 33 and g < 35: #34
-                                print(g,end=" ")
-                                print("aaa[5]",end=" ")
-                                print(aaa[5])
-                                la = True    
-
-
-                            if do and re and mi and fa and so and la:
-                                Preceed = True
-                            else:
-                                Preceed = False
-                                
+                            print(a)  
                             print(arduinoString)
                             print("")
 
@@ -379,14 +253,6 @@ class Application(Frame):
                                 except:
                                     print("Error could not append sensor data")
 
-
-                    Preceed = False
-                    do = False
-                    re = False
-                    mi = False
-                    fa = False
-                    so = False
-                    la = False
 
                 except:
                     print("No data received")
