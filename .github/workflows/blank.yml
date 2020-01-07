@@ -1,0 +1,405 @@
+import matplotlib
+matplotlib.use("TkAgg")
+from matplotlib.figure import Figure
+import matplotlib.animation as animation
+from matplotlib import style
+import tkinter as tk
+import datetime
+import time
+import serial
+from tkinter import *
+from tkinter import ttk
+import numpy 
+import pandas as pd
+import numpy as np
+import sys
+import matplotlib.pyplot as plt
+from drawnow import *
+import webbrowser
+import serial.tools.list_ports
+import glob
+
+do = False
+re = False
+mi = False
+fa = False
+so = False
+la = False
+comlist = serial.tools.list_ports.comports()
+DO1 = []
+Oxy2 = []
+dt1 = []
+dt2 = []
+Water_Level = []
+tempF1= []
+tempF2= []
+ORP = []
+PH= []
+a = 0
+clicked = None
+plt.ion()                                    #Tell matplotlib you want interactive mode to plot live data
+cntB1= 0
+cntB2= 0
+connected = 0
+com_port_connected = 0
+LARGE_FONT= ("Verdana", 12)
+style.use("dark_background")                 #ggplot...dark_background
+Apply = 0
+
+
+########################################################################### APPLICATION START ########################################################################
+########################################################################### APPLICATION START ########################################################################
+
+#C:\Users\Leon\Desktop\DATA SHRIMP SEASON 2018
+
+# Main Tkinter application
+class Application(Frame):
+
+        def __init__(self, master=None):
+                Frame.__init__(self, master)
+                root.title( "Stylibleue Dashboard")
+                root.state('zoomed')
+                root.configure(background='black')
+
+                self.grid(row=0, column=0, sticky="nsew")      # Thus makes an invisible grid to make the layout
+                self.grid_rowconfigure(0, weight=3)
+                self.grid_columnconfigure(0, weight=3)
+                self.columnconfigure(1, weight=3)
+                self.columnconfigure(2, weight=3)
+
+
+                # connect RX label
+                self.B10 = StringVar()
+                #Timer entry
+                self.Timer_entry_B1_D1 = StringVar()
+
+                self.createWidgets()
+                self.pack()
+                self.B10.set("Connect RX")
+                self.measure()
+
+####################################################################### CREATE DISPLAY ########################################################################################
+####################################################################### CREATE DISPLAY ########################################################################################
+
+
+        def connect(self):
+
+                    connected = []
+
+                    global com_port_connected
+                    global arduinoData
+                                
+                    if sys.platform.startswith('win'):
+                        for element in comlist:
+                            connected.append(element.device)
+                            #C1.set(str("RX connected"))
+                            self.B10.set("Connecting...")
+                            global com_port_connected
+                            com_port_connected = True
+                            print(element.device)
+                            global arduinoData
+                            arduinoData = serial.Serial(element.device, 115200)  #Creating our serial object named arduinoData
+                            self.measure()
+                            print(com_port_connected)
+                    
+                    else:
+                            raise EnvironmentError('Unsupported platform')
+
+                            
+                            if sys.platform.startswith('win'):
+                                for element in comlist:
+                                    connected.append(element.device)
+                                    C1.set(str("RX connected"))
+                                    self.B10.set("Connecting...")
+                                    global com_port_connected
+                                    com_port_connected = True
+                                    print(element.device)
+                                    global arduinoData
+                                    arduinoData = serial.Serial(element.device, 115200)  #Creating our serial object named arduinoData
+                                    self.measure()
+                                    print(com_port_connected)
+                                    Y.destroy()
+                            
+                            else:
+                                  raise EnvironmentError('Unsupported platform')
+
+
+                    Y.Setting_page_title = Label(Y, text="Com port settings", font=('Verdana', 30), fg="red", bg="black").grid(row=0, column=5, sticky="nsew")
+
+                  
+        def createWidgets(self):
+                 # creating a menu instance
+                menu = Menu(self.master)
+                self.master.config(menu=menu)
+
+                # create the file object)
+                file = Menu(menu)
+                menu.add_cascade(label="File", menu=file)
+
+
+####################################################################  GRAPHS  ############################################################################################ 
+####################################################################  GRAPHS  ############################################################################################ 
+
+############################################################## Bassin 1 D.O graph ###################################################################################
+        def button_press1(self):
+                clicked = True
+                print (clicked)
+                drawnow(self.makeFig1)                         #Call drawnow to update our live graph
+                plt.pause(.000001)                             #Pause Briefly. Important to keep drawnow from crashing            
+        def makeFig1(self):
+            mng = plt.get_current_fig_manager()
+            mng.window.state('zoomed')
+            plt.title("D.O graph bassin 1")                    #Plot the title
+            plt.grid(True)                                     #Turn the grid on
+            plt.setp(plt.xticks()[1], rotation=30, ha='right') #ha is the same as horizontalalignment
+            plt.ylabel('D.O')                                  #Set ylabels
+            plt.plot(dt1,DO1, label='D.O')                     #plot the temperature
+            plt.legend(loc='upper left')                       #plot the legend
+            plt.draw()
+
+ ############################################################### Bassin 1 Temp graph #################################################################################
+        def button_press9(self):
+                clicked = True
+                print (clicked)
+                drawnow(self.makeFig9)                         #Call drawnow to update our live graph
+                plt.pause(.000001)                             #Pause Briefly. Important to keep drawnow from crashing
+        def makeFig9(self):
+            mng = plt.get_current_fig_manager()
+            mng.window.state('zoomed')
+            plt.title("Temp graph bassin 1")                    #Plot the title
+            plt.grid(True)                                     #Turn the grid on
+            plt.setp(plt.xticks()[1], rotation=30, ha='right') #ha is the same as horizontalalignment
+            plt.ylabel('D.O')                                  #Set ylabels
+            plt.plot(dt1,tempF1, label='D.O')                     #plot the temperature
+            plt.legend(loc='upper left')                       #plot the legend
+            plt.draw()
+
+############################################################### Bassin 2 D.O graph #################################################################################
+        def button_press2(self):
+                clicked = True
+                print (clicked)
+                drawnow(self.makeFig2)                         #Call drawnow to update our live graph
+                plt.pause(.000001)                             #Pause Briefly. Important to keep drawnow from crashing
+        def makeFig2(self):
+            mng = plt.get_current_fig_manager()
+            mng.window.state('zoomed')
+            plt.title("D.O graph bassin 2")                    #Plot the title
+            plt.grid(True)                                     #Turn the grid on
+            plt.setp(plt.xticks()[1], rotation=30, ha='right') #ha is the same as horizontalalignment
+            plt.ylabel('D.O')                                  #Set ylabels
+            plt.plot(dt2,Oxy2, label='D.O')                     #plot the temperature
+            plt.legend(loc='upper left')                       #plot the legend
+            plt.draw()
+     
+############################################################### Bassin 2 Temp graph #################################################################################
+        def button_press10(self):
+                clicked = True
+                print (clicked)
+                drawnow(self.makeFig10)                         #Call drawnow to update our live graph
+                plt.pause(.000001)                             #Pause Briefly. Important to keep drawnow from crashing
+        def makeFig10(self):
+            mng = plt.get_current_fig_manager()
+            mng.window.state('zoomed')
+            plt.title("Temp graph bassin 2")                    #Plot the title
+            plt.grid(True)                                     #Turn the grid on
+            plt.setp(plt.xticks()[1], rotation=30, ha='right') #ha is the same as horizontalalignment
+            plt.ylabel('*C')                                  #Set ylabels
+            plt.plot(dt2,tempF2, label='*C')                     #plot the temperature
+            plt.legend(loc='upper left')                       #plot the legend
+            plt.draw()
+
+
+####################################################################  DO MEASUREMENT  ############################################################################################ 
+####################################################################  DO MEASUREMENT  ############################################################################################ 
+     
+        def measure(self):
+            if com_port_connected == True:    
+                try:                    
+                    # If there is incoming data to parse and display it
+                    if(arduinoData.inWaiting()>0 ):    #and arduinoData.inWaiting()>50 ):
+                        arduinoString = arduinoData.readline()
+                        self.B10.set("")
+                        #arduinoString =str(arduinoString,'utf-8')                          #removes the surrounding rubbish
+                        arduinoString =str(arduinoString)                                   #removes the surrounding rubbish
+                        aaa = arduinoString.split(',')
+                        #print(arduinoString.split(','))
+                        a = sys.getsizeof(arduinoString) 
+                        
+                        print("-------Received Sensor data-------")
+                        print(a)
+                                    
+                        #if aaa[0] == "b'STYLI27":
+
+                        self.B10.set("")
+                        #arduinoString =str(arduinoString,'utf-8')                          #removes the surrounding rubbish
+                        arduinoString =str(arduinoString)                                   #removes the surrounding rubbish
+                        aaa = arduinoString.split(',')
+                        print(arduinoString.split(','))
+                        a = sys.getsizeof(arduinoString) 
+                      
+                            
+                        if sys.platform.startswith('win') and a > 73 and a < 75:#74
+                            print(a)
+
+                            try:
+                                b = sys.getsizeof(aaa[0]) 
+                            except:
+                                print("data not correctly formatted")
+
+                            if b > 33 and b < 35: #34
+                                print(b,end=" ")
+                                print("aaa[0]",end=" ")
+                                print(aaa[0])
+                                do = True
+
+    
+                            try:
+                                c = sys.getsizeof(aaa[1])
+                            except:
+                                print("data not correctly formatted")
+
+                            if c > 25 and c < 28: #27
+                                print(c,end=" ")
+                                print("aaa[1]",end=" ")
+                                print(aaa[1])
+                                re = True
+
+
+                            try:
+                                d = sys.getsizeof(aaa[2])
+                            except:
+                                print("data not correctly formatted")
+
+                            if d > 28 and d < 31: #30
+                                print(d,end=" ")
+                                print("aaa[2]",end=" ")
+                                print(aaa[2])
+                                mi = True
+
+                            try:
+                                e = sys.getsizeof(aaa[3])
+                            except:
+                                print("data not correctly formatted")
+
+                            if e > 31 and e < 34: #33
+                                print(e,end=" ")
+                                print("aaa[3]",end=" ")
+                                print(aaa[3])
+                                fa = True
+
+                            try:
+                                f = sys.getsizeof(aaa[4])
+                            except:
+                                print("data not correctly formatted")
+
+                            #if f > 32 and g < 35: #33
+                            print(f,end=" ")
+                            print("aaa[4]",end=" ")
+                            print(aaa[4])
+                            so = True
+
+                            try:
+                                g = sys.getsizeof(aaa[5])
+                            except:
+                                print("data not correctly formatted")
+
+                            if g > 33 and g < 35: #34
+                                print(g,end=" ")
+                                print("aaa[5]",end=" ")
+                                print(aaa[5])
+                                la = True    
+
+
+                            if do and re and mi and fa and so and la:
+                                Preceed = True
+                            else:
+                                Preceed = False
+                                
+                            print(arduinoString)
+                            print("")
+
+                     
+    ####################################################################  UPDATE SENSOR LABELS  ############################################################################################ 
+    ####################################################################  UPDATE SENSOR LABELS  ############################################################################################ 
+
+                        if aaa[1] == "B1" and Preceed == True:#BASSIN ONE ADDRESS HERE  ##152     if a == 55 and aaa[0] == "B1/1/," :
+
+                                self.B1.set(str(aaa[3]))
+                                self.B11.set(str(aaa[5]))
+                                self.B11111.set(str(datetime.datetime.now().strftime("%d/%m %H:%M")))
+                                print(datetime.datetime.now().strftime("%d/%m %H:%M"))
+                                    
+                                
+
+                                try:
+                                    DO1.append(float(aaa[3]))
+                                    tempF1.append(float(aaa[5]))
+                                    dt1.append(datetime.datetime.now())
+
+                                    global cntB1
+                                    cntB1=cntB1+1
+
+                                    print("cntB1")
+                                    print(cntB1)
+
+                                    if(cntB1>10000):
+                                        tempF1.pop(0)
+                                        DO1.pop(0)
+                                        dt1.pop(0)
+                                except:
+                                    print("Error could not append sensor data")
+
+
+                                        
+        #--------------------------------------------------------------------------------------------------------------------------------------------------------------------                             
+                        if aaa[1] == "B2" and Preceed == True:#BASSIN TWO ADDRESS HERE 
+
+                                self.B2.set(str(aaa[3]))
+                                self.B22.set(str(aaa[5]))
+                                self.B22222.set(str(datetime.datetime.now().strftime("%d/%m %H:%M")))
+                                print(datetime.datetime.now().strftime("%d/%m %H:%M"))#%Y-%m-%d %H:%M:%S
+
+                                
+
+                                try:
+                                    tempF2.append(float(aaa[5]))
+                                    Oxy2.append(float(aaa[3]))
+                                    dt2.append(datetime.datetime.now())
+
+                                    global cntB2
+                                    cntB2=cntB2+1
+
+                                    print("cntB2")
+                                    print(cntB2)
+
+                                    if(cntB2>10000):
+                                        tempF2.pop(0)
+                                        Oxy2.pop(0)
+                                        dt2.pop(0)
+                                except:
+                                    print("Error could not append sensor data")
+
+
+                    Preceed = False
+                    do = False
+                    re = False
+                    mi = False
+                    fa = False
+                    so = False
+                    la = False
+
+                except:
+                    print("No data received")
+                    self.B10.set("Connect RX")
+
+#--------------------------------------------------------------------------------------------------------------------------------------------------------------------                                                                 
+                self.after(1000,self.measure)                       # Wait 1 second between each measurement
+                self.after(1000,self.check_buttons)                 # check for button press 
+                arduinoData.flushOutput()
+                arduinoData.flushInput()
+
+
+# Create and run the GUI
+root = Tk()
+app = Application(master=root)
+app.mainloop()
