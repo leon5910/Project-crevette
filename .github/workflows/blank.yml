@@ -66,6 +66,65 @@ class Application(Frame):
                 self.grid_columnconfigure(0, weight=3)
                 self.columnconfigure(1, weight=3)
                 self.columnconfigure(2, weight=3)
+                self.columnconfigure(3, weight=3)
+                self.columnconfigure(4, weight=3)
+                self.columnconfigure(5, weight=3)
+                self.columnconfigure(6, weight=3)
+                self.columnconfigure(7, weight=3)
+                self.columnconfigure(8, weight=3)
+                self.columnconfigure(9, weight=3)
+
+
+                self.B0 = StringVar()
+                self.B1 = StringVar()                          #These are the labels that change when sensor data is received
+                self.B11 = StringVar()
+                self.B111 = StringVar()
+                self.B1111 = StringVar()
+                self.B11111 = StringVar()    # date time
+                self.B111111 = StringVar()   #water level b1
+                self.B2 = StringVar()
+                self.B22 = StringVar()
+                self.B222 = StringVar()
+                self.B2222 = StringVar()
+                self.B22222 = StringVar()
+                self.B3 = StringVar()
+                self.B4 = StringVar()
+                self.B5 = StringVar()
+
+                #Daily limit
+                self.Daily_limit_B1_D1 = StringVar()
+                self.Daily_limit_B1_D2 = StringVar()
+                self.Daily_limit_B1_D3 = StringVar()
+                self.Daily_limit_B1_D4 = StringVar()
+                self.Daily_limit_B1_D5 = StringVar()
+                self.Daily_limit_B1_D6 = StringVar()
+
+                self.Daily_limit_B2_D1 = StringVar()
+                self.Daily_limit_B2_D2 = StringVar()
+                self.Daily_limit_B2_D3 = StringVar()
+                self.Daily_limit_B2_D4 = StringVar()
+                self.Daily_limit_B2_D5 = StringVar()
+                self.Daily_limit_B2_D6 = StringVar()
+
+                #Calibration
+                self.Calibration_B1_D1 = StringVar()
+                self.Calibration_B1_D2 = StringVar()
+                self.Calibration_B1_D3 = StringVar()
+                self.Calibration_B1_D4 = StringVar()
+                self.Calibration_B1_D5 = StringVar()
+                self.Calibration_B1_D6 = StringVar()
+                
+                self.Calibration_B2_D1 = StringVar()
+                self.Calibration_B2_D2 = StringVar()
+                self.Calibration_B2_D3 = StringVar()
+                self.Calibration_B2_D4 = StringVar()
+                self.Calibration_B2_D5 = StringVar()
+                self.Calibration_B2_D6 = StringVar()
+
+                # connect RX label
+                self.B10 = StringVar()
+                #Timer entry
+                self.Timer_entry_B1_D1 = StringVar()
 
                 self.createWidgets()
                 self.pack()
@@ -75,7 +134,134 @@ class Application(Frame):
 ####################################################################### CREATE DISPLAY ########################################################################################
 ####################################################################### CREATE DISPLAY ########################################################################################
 
+        def client_exit(self):
+            exit()
+            
+        def Weather(self):
+            webbrowser.open('https://www.accuweather.com/en/nc/la-foa/249102/weather-forecast/249102')
+
+        def Tides(self):
+            webbrowser.open('https://www.tide-forecast.com/locations/Noumea-New-Caledonia/tides/latest')
+
+        def hello(self):
+            print("hello")
+
+
+
+        def connect(self):
+
+                    connected = []
+
+                    global com_port_connected
+                    global arduinoData
+                                
+                    if sys.platform.startswith('win'):
+                        for element in comlist:
+                            connected.append(element.device)
+                            #C1.set(str("RX connected"))
+                            self.B10.set("Connecting...")
+                            global com_port_connected
+                            com_port_connected = True
+                            print(element.device)
+                            global arduinoData
+                            arduinoData = serial.Serial(element.device, 115200)  #Creating our serial object named arduinoData
+                            self.measure()
+                            print(com_port_connected)
+                    elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
+                            # this excludes your current terminal "/dev/tty"
+                            arduinoData = glob.glob('/dev/tty[A-Za-z]*')
+                            C1.set(str("RX connected"))
+                            self.B10.set("Connecting...")
+                            com_port_connected = True
+                    elif sys.platform.startswith('darwin'):# THIS IS FOR MAC OS
+                            arduinoData = serial.Serial('/dev/tty.usbmodem641', baudrate=115200)
+                            C1.set(str("RX connected"))
+                            self.B10.set("Connecting...")
+                            com_port_connected = True
+                            print(com_port_connected)
+                            print("here")
+                            self.measure()
+                            #arduinoData = serial.Serial(event.widget.get(), baudrate=115200)
+                    else:
+                            raise EnvironmentError('Unsupported platform')
+
+                    def serial_ports():
+                        return serial.tools.list_ports.comports()
+
+
+        def Connect_RX(self):
+
+                    Y = tk.Toplevel(self)
+                    #Y.state('zoomed')
+                    Y.wm_title("Com port page")
+                    Y.configure(background='black')
+
+                    
+                    def serial_ports():
+                        return serial.tools.list_ports.comports()
+
+                    def on_select(event=None):
                   
+                            print("event.widget:", event.widget.get())
+                            connected = []
+
+                        
+
+                            global com_port_connected
+                            global arduinoData
+                            
+                            if sys.platform.startswith('win'):
+                                for element in comlist:
+                                    connected.append(element.device)
+                                    C1.set(str("RX connected"))
+                                    self.B10.set("Connecting...")
+                                    global com_port_connected
+                                    com_port_connected = True
+                                    print(element.device)
+                                    global arduinoData
+                                    arduinoData = serial.Serial(element.device, 115200)  #Creating our serial object named arduinoData
+                                    self.measure()
+                                    print(com_port_connected)
+                                    Y.destroy()
+                            elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
+                                        # this excludes your current terminal "/dev/tty"
+                                    arduinoData = glob.glob('/dev/tty[A-Za-z]*')
+                                    C1.set(str("RX connected"))
+                                    self.B10.set("Connecting...")
+                                    com_port_connected = True
+                            elif sys.platform.startswith('darwin'):# THIS IS FOR MAC OS
+                                    arduinoData = serial.Serial('/dev/tty.usbmodem641', baudrate=115200)
+                                    C1.set(str("RX connected"))
+                                    self.B10.set("Connecting...")
+                                    com_port_connected = True
+                                    print(com_port_connected)
+                                    print("here")
+                                    Y.destroy()
+                                    self.measure()
+                                    #arduinoData = serial.Serial(event.widget.get(), baudrate=115200)
+                            else:
+                                  raise EnvironmentError('Unsupported platform')
+
+
+                    Y.Setting_page_title = Label(Y, text="Com port settings", font=('Verdana', 30), fg="red", bg="black").grid(row=0, column=5, sticky="nsew")
+
+                    #Make the advice label to tell user to connect
+                    C1 = StringVar()                        
+                    C1.set(str("Please connect and select comport for RX"))
+                    #Put the advice label in the correct position
+                    L = Label(Y, textvariable=C1)        
+                    L.grid(row=6, column=2, sticky="nsew")
+
+                    #Put the com-box in the correct position
+                    cb = ttk.Combobox(Y, values=serial_ports())
+                    cb.grid(row=7, column=2, sticky="nsew")
+
+                    # assign function to combobox
+                    cb.bind('<<ComboboxSelected>>', on_select)
+
+                
+                    
+
         def createWidgets(self):
                  # creating a menu instance
                 menu = Menu(self.master)
@@ -86,6 +272,199 @@ class Application(Frame):
                 menu.add_cascade(label="File", menu=file)
 
 
+                            
+                #code for sub menu
+                recentMenu = tk.Menu(self)
+                file.add_cascade(label="Connect com-port", menu=recentMenu)
+                for element in comlist:
+                    recentMenu.add_command(label=element,command=self.connect)
+                    #print(element)
+                    #connect(self)
+                    #recentMenu.add_command(label="Connect com-port", command=hello)
+
+
+
+                file.add_command(label="Exit", command=self.client_exit)
+                file.add_command(label="Connect RX", command=self.Connect_RX)
+                file.add_command(label="Weather", command=self.Weather)
+                file.add_command(label="Tides", command=self.Tides)
+
+                #self.B1DO = Label(self, textvariable=self.B1, font=('Verdana', 15), fg="red", bg="black").grid(row=5, column=1, sticky="nsew")
+
+                #SCREEN SPACERS--------------------------
+                self.temperature = Label(self, text="0", font=('Verdana', 20)).grid(row=50, column=0,padx=100)
+                self.temperature = Label(self, text="1", font=('Verdana', 20)).grid(row=50, column=1,padx=100)
+                self.temperature = Label(self, text="2", font=('Verdana', 20)).grid(row=50, column=2,padx=100)
+                self.temperature = Label(self, text="3", font=('Verdana', 20)).grid(row=50, column=3,padx=100)
+                self.temperature = Label(self, text="4", font=('Verdana', 20)).grid(row=50, column=4,padx=100)
+                self.temperature = Label(self, text="5", font=('Verdana', 20)).grid(row=50, column=5,padx=100)
+                self.temperature = Label(self, text="6", font=('Verdana', 20)).grid(row=50, column=6,padx=100)
+                self.temperature = Label(self, text="7", font=('Verdana', 20)).grid(row=50, column=7,padx=100)
+                self.temperature = Label(self, text="8", font=('Verdana', 20)).grid(row=50, column=8,padx=100)
+                self.temperature = Label(self, text="9", font=('Verdana', 20)).grid(row=50, column=9,padx=100)
+
+                #SCREEN BUTTONS--------------------------
+                ttk.Button.config(self,background='black')
+                ttk.Button(self, text='D.O Graph',   command=self.button_press1).grid(row=3, column=2, sticky=E, padx=30, pady=0)
+                ttk.Button(self, text='D.O Graph',   command=self.button_press2).grid(row=11, column=2, sticky=E, padx=30, pady=0)
+                ttk.Button(self, text='Temp Graph',  command=self.button_press9).grid(row=3, column=3, sticky=E, padx=30, pady=0)
+                ttk.Button(self, text='Temp Graph',  command=self.button_press10).grid(row=11, column=3, sticky=E, padx=30, pady=0)
+
+                #ttk.Button(self, text='All Temp',    command=self.button_press3).grid(row=0, column=3, sticky=E, padx=30, pady=0)
+                #ttk.Button(self, text='All D.O.',    command=self.button_press4).grid(row=0, column=2, sticky=E, padx=30, pady=0)
+                #ttk.Button(self, text='Water Level', command=self.Water_level_1).grid(row=3, column=4, sticky=E, padx=30, pady=0)
+                #ttk.Button(self, text='Water Level', command=self.Water_level_1).grid(row=10, column=4, sticky=E, padx=30, pady=0)
+                
+                #Top labels
+                self.temperature = Label(self, text="DO(mg/L)", font=('Verdana', 12), fg="red", bg="black").grid(row=1, column=2, sticky="nsew")
+                self.temperature = Label(self, text="Temp *C", font=('Verdana', 12), fg="red", bg="black").grid(row=1, column=3, sticky="nsew")
+                self.timestamp = Label(self, text="Time received", font=('Verdana', 10), fg="red", bg="black").grid(row=1, column=1, sticky="nsew")
+                self.He = Label(self, textvariable=self.B10, font=('Verdana', 15), fg="red", bg="black").grid(row=0, column=4, sticky="nsew", padx=0, pady=0)
+
+                #self.temperature = Label(self, text="Water level", font=('Verdana', 10), fg="red", bg="black").grid(row=1, column=6, sticky="nsew")#Water level
+                #self.temperature = Label(self, text="", font=('Verdana', 10), fg="red", bg="black").grid(row=1, column=6, sticky="nsew")#Amount fed
+                #self.temperature = Label(self, text="", font=('Verdana', 10), fg="red", bg="black").grid(row=1, column=7, sticky="nsew")#Daily limit
+                #self.temperature = Label(self, text="", font=('Verdana', 10), fg="red", bg="black").grid(row=1, column=8, sticky="nsew")#Status
+                #self.temperature = Label(self, text="", font=('Verdana', 10), fg="red", bg="black").grid(row=1, column=9, sticky="nsew")#Errors
+                
+                #B1 Labels --------------------------
+                self.temperature = Label(self, text="Bassin 1", font=('Verdana', 15), fg="red", bg="black").grid(row=3, column=0, sticky="nsew")
+
+                #incoming data labels
+
+                self.B1_Box1_TIME = Label(self, textvariable=self.B0, font=('Verdana', 12), fg="red", bg="black").grid(row=4, column=1, sticky="nsew")
+                self.B1_Box1_DO = Label(self, textvariable=self.B0, font=('Verdana', 12), fg="red", bg="black").grid(row=4, column=2, sticky="nsew")
+                self.B1_Box1_TEMP = Label(self, textvariable=self.B0, font=('Verdana', 12), fg="red", bg="black").grid(row=4, column=3, sticky="nsew")
+
+                self.B1_Box2_TIME = Label(self, textvariable=self.B0, font=('Verdana', 12), fg="red", bg="black").grid(row=5, column=1, sticky="nsew")
+                self.B1_Box2_DO = Label(self, textvariable=self.B0, font=('Verdana', 12), fg="red", bg="black").grid(row=5, column=2, sticky="nsew")
+                self.B1_Box2_TEMP = Label(self, textvariable=self.B0, font=('Verdana', 12), fg="red", bg="black").grid(row=5, column=3, sticky="nsew")
+
+                self.B1_Box3_TIME = Label(self, textvariable=self.B11111, font=('Verdana', 12), fg="red", bg="black").grid(row=6, column=1, sticky="nsew")
+                self.B1_Box3_DO = Label(self, textvariable=self.B1, font=('Verdana', 12), fg="red", bg="black").grid(row=6, column=2, sticky="nsew")
+                self.B1_Box3_TEMP = Label(self, textvariable=self.B11, font=('Verdana', 12), fg="red", bg="black").grid(row=6, column=3, sticky="nsew")
+
+                self.B1_Box4_TIME = Label(self, textvariable=self.B0, font=('Verdana', 12), fg="red", bg="black").grid(row=7, column=1, sticky="nsew")
+                self.B1_Box4_DO = Label(self, textvariable=self.B0, font=('Verdana', 12), fg="red", bg="black").grid(row=7, column=2, sticky="nsew")
+                self.B1_Box4_TEMP = Label(self, textvariable=self.B0, font=('Verdana', 12), fg="red", bg="black").grid(row=7, column=3, sticky="nsew")
+
+                self.B1_Box5_TIME = Label(self, textvariable=self.B0, font=('Verdana', 12), fg="red", bg="black").grid(row=8, column=1, sticky="nsew")
+                self.B1_Box5_DO = Label(self, textvariable=self.B0, font=('Verdana', 12), fg="red", bg="black").grid(row=8, column=2, sticky="nsew")
+                self.B1_Box5_TEMP = Label(self, textvariable=self.B0, font=('Verdana', 12), fg="red", bg="black").grid(row=8, column=3, sticky="nsew")
+
+                self.B1_Box6_TIME = Label(self, textvariable=self.B0, font=('Verdana', 12), fg="red", bg="black").grid(row=9, column=1, sticky="nsew")
+                self.B1_Box6_DO = Label(self, textvariable=self.B0, font=('Verdana', 12), fg="red", bg="black").grid(row=9, column=2, sticky="nsew")
+                self.B1_Box6_TEMP = Label(self, textvariable=self.B0, font=('Verdana', 12), fg="red", bg="black").grid(row=9, column=3, sticky="nsew")
+
+
+                #B2 Labels --------------------------
+                self.temperature = Label(self, text="Bassin 2", font=('Verdana', 15), fg="red", bg="black").grid(row=11, column=0, sticky="nsew")
+
+                self.B2_Box1_TIME = Label(self, textvariable=self.B0, font=('Verdana', 12), fg="red", bg="black").grid(row=13, column=1, sticky="nsew")
+                self.B2_Box1_DO = Label(self, textvariable=self.B0, font=('Verdana', 12), fg="red", bg="black").grid(row=13, column=2, sticky="nsew")
+                self.B2_Box1_TEMP = Label(self, textvariable=self.B0, font=('Verdana', 12), fg="red", bg="black").grid(row=13, column=3, sticky="nsew")
+
+                self.B2_Box2_TIME = Label(self, textvariable=self.B0, font=('Verdana', 12), fg="red", bg="black").grid(row=13, column=1, sticky="nsew")
+                self.B2_Box2_DO = Label(self, textvariable=self.B0, font=('Verdana', 12), fg="red", bg="black").grid(row=13, column=2, sticky="nsew")
+                self.B2_Box2_TEMP = Label(self, textvariable=self.B0, font=('Verdana', 12), fg="red", bg="black").grid(row=13, column=3, sticky="nsew")
+
+                self.B2_Box3_TIME = Label(self, textvariable=self.B22222, font=('Verdana', 12), fg="red", bg="black").grid(row=14, column=1, sticky="nsew")
+                self.B2_Box3_DO = Label(self, textvariable=self.B2, font=('Verdana', 12), fg="red", bg="black").grid(row=14, column=2, sticky="nsew")
+                self.B2_Box3_TEMP = Label(self, textvariable=self.B22, font=('Verdana', 12), fg="red", bg="black").grid(row=14, column=3, sticky="nsew")
+
+                self.B2_Box4_TIME = Label(self, textvariable=self.B0, font=('Verdana', 12), fg="red", bg="black").grid(row=13, column=1, sticky="nsew")
+                self.B2_Box4_DO = Label(self, textvariable=self.B0, font=('Verdana', 12), fg="red", bg="black").grid(row=13, column=2, sticky="nsew")
+                self.B2_Box4_TEMP = Label(self, textvariable=self.B0, font=('Verdana', 12), fg="red", bg="black").grid(row=13, column=3, sticky="nsew")
+
+                self.B2_Box5_TIME = Label(self, textvariable=self.B0, font=('Verdana', 12), fg="red", bg="black").grid(row=13, column=1, sticky="nsew")
+                self.B2_Box5_DO = Label(self, textvariable=self.B0, font=('Verdana', 12), fg="red", bg="black").grid(row=13, column=2, sticky="nsew")
+                self.B2_Box5_TEMP = Label(self, textvariable=self.B0, font=('Verdana', 12), fg="red", bg="black").grid(row=13, column=3, sticky="nsew")
+
+
+################################################################ DISTRIBUTOR SETTINGS PAGE#################################################################################### 
+################################################################ DISTRIBUTOR SETTINGS PAGE ####################################################################################
+
+
+                #Bassin 1 
+                cb1 = ttk.Combobox(self, values=("Stop", "Start", "Settings", "Hydrophone"))
+                cb1.set("Box 1")
+                cb1.grid(row=4, column=0, sticky=E, pady=0)
+                #cb1.bind('<<ComboboxSelected>>', B1_Distributor_2)
+                
+                cb2 = ttk.Combobox(self, values=("Stop", "Start", "Settings", "Hydrophone"))
+                cb2.set("Box 2")
+                cb2.grid(row=5, column=0, sticky=E, pady=0)
+                #cb2.bind('<<ComboboxSelected>>', B1_Distributor_2)
+                
+                cb3 = ttk.Combobox(self, values=("Stop", "Start", "Settings", "Hydrophone"))
+                cb3.set("Box 3")
+                cb3.grid(row=6, column=0, sticky=E, pady=0)
+                #cb3.bind('<<ComboboxSelected>>', B1_Distributor_2)
+                
+                cb4 = ttk.Combobox(self, values=("Stop", "Start", "Settings", "Hydrophone"))
+                cb4.set("Box 4")
+                cb4.grid(row=7, column=0, sticky=E, pady=0)
+                #cb4.bind('<<ComboboxSelected>>', B1_Distributor_2)
+
+                cb5 = ttk.Combobox(self, values=("Stop", "Start", "Settings", "Hydrophone"))
+                cb5.set("Box 5")
+                cb5.grid(row=8, column=0, sticky=E, pady=0)
+                #cb5.bind('<<ComboboxSelected>>', B1_Distributor_2)
+
+                cb6 = ttk.Combobox(self, values=("Stop", "Start", "Settings", "Hydrophone"))
+                cb6.set("Box 6")
+                cb6.grid(row=9, column=0, sticky=E, pady=0)
+                #cb6.bind('<<ComboboxSelected>>', B1_Distributor_2)
+
+
+                #Bassin 2
+                cb = ttk.Combobox(self, values=("Stop", "Start", "Settings", "Hydrophone"))
+                cb.set("Box 1")
+                cb.grid(row=12, column=0, sticky=E, pady=0)
+
+                cb = ttk.Combobox(self, values=("Stop", "Start", "Settings", "Hydrophone"))
+                cb.set("Box 2")
+                cb.grid(row=13, column=0, sticky=E, pady=0)
+
+                cb = ttk.Combobox(self, values=("Stop", "Start", "Settings", "Hydrophone"))
+                cb.set("Box 3")
+                cb.grid(row=14, column=0, sticky=E, pady=0)
+
+                cb = ttk.Combobox(self, values=("Stop", "Start", "Settings", "Hydrophone"))
+                cb.set("Box 4")
+                cb.grid(row=15, column=0, sticky=E, pady=0)
+
+                cb = ttk.Combobox(self, values=("Stop", "Start", "Settings", "Hydrophone"))
+                cb.set("Box 5")
+                cb.grid(row=16, column=0, sticky=E, pady=0)
+
+                cb = ttk.Combobox(self, values=("Stop", "Start", "Settings", "Hydrophone"))
+                cb.set("Box 6")
+                cb.grid(row=17, column=0, sticky=E, pady=0)
+
+
+
+
+################################################################ DISTRIBUTOR COMBOXES #################################################################################### 
+################################################################ DISTRIBUTOR COMBOXES ####################################################################################
+
+
+
+                ttk.Separator(self,orient=HORIZONTAL).grid(row=2, columnspan=12, sticky="ew", pady=5)
+                ttk.Separator(self,orient=HORIZONTAL).grid(row=10, columnspan=12, sticky="ew", pady=5)
+                ttk.Separator(self,orient=HORIZONTAL).grid(row=18, columnspan=12, sticky="ew", pady=5)
+
+####################################################################  WEB PAGE  ############################################################################################ 
+####################################################################  WEB PAGE  ############################################################################################ 
+
+        # Weather
+        def OpenUrl(self,url):
+            webbrowser.open_new(url)
+
+        # Tides
+        def OpenUrl_2(self,url):
+            webbrowser.open_new(url_2)
+            
 ####################################################################  GRAPHS  ############################################################################################ 
 ####################################################################  GRAPHS  ############################################################################################ 
 
@@ -160,7 +539,22 @@ class Application(Frame):
 
 ####################################################################  DO MEASUREMENT  ############################################################################################ 
 ####################################################################  DO MEASUREMENT  ############################################################################################ 
-     
+
+        def check_buttons(self):
+                print("Waiting for command...")
+                global Apply
+                
+                if Apply == 1:
+                    print(":       PYTHON       : ")  
+                    print("Sending relay changes out to bassin 1")
+                    arduinoData.write(b'<STYLI27,B1,BLINK,4000,2000>')
+                    aaabbb = arduinoData.readline().decode('ascii')
+                    print()
+                    print(":       ARDUINO  RX     : ")
+                    print(aaabbb)
+                    Apply = 0
+
+        
         def measure(self):
             if com_port_connected == True:    
                 try:                    
@@ -185,14 +579,187 @@ class Application(Frame):
                         aaa = arduinoString.split(',')
                         print(arduinoString.split(','))
                         a = sys.getsizeof(arduinoString) 
+                        #for arduinoString in aaa:
+                            #print(arduinoString)
+                            #print("")
+
+                        #print("hellllooooo")
+                        #print(a)
+                                    
+
                       
                             
                         if sys.platform.startswith('win') and a > 73 and a < 75:#74
-                            print(a)  
+                            print(a)
+
+                            try:
+                                b = sys.getsizeof(aaa[0]) 
+                            except:
+                                print("data not correctly formatted")
+
+                            if b > 33 and b < 35: #34
+                                print(b,end=" ")
+                                print("aaa[0]",end=" ")
+                                print(aaa[0])
+                                do = True
+
+    
+                            try:
+                                c = sys.getsizeof(aaa[1])
+                            except:
+                                print("data not correctly formatted")
+
+                            if c > 25 and c < 28: #27
+                                print(c,end=" ")
+                                print("aaa[1]",end=" ")
+                                print(aaa[1])
+                                re = True
+
+
+                            try:
+                                d = sys.getsizeof(aaa[2])
+                            except:
+                                print("data not correctly formatted")
+
+                            if d > 28 and d < 31: #30
+                                print(d,end=" ")
+                                print("aaa[2]",end=" ")
+                                print(aaa[2])
+                                mi = True
+
+                            try:
+                                e = sys.getsizeof(aaa[3])
+                            except:
+                                print("data not correctly formatted")
+
+                            if e > 31 and e < 34: #33
+                                print(e,end=" ")
+                                print("aaa[3]",end=" ")
+                                print(aaa[3])
+                                fa = True
+
+                            try:
+                                f = sys.getsizeof(aaa[4])
+                            except:
+                                print("data not correctly formatted")
+
+                            #if f > 32 and g < 35: #33
+                            print(f,end=" ")
+                            print("aaa[4]",end=" ")
+                            print(aaa[4])
+                            so = True
+
+                            try:
+                                g = sys.getsizeof(aaa[5])
+                            except:
+                                print("data not correctly formatted")
+
+                            if g > 33 and g < 35: #34
+                                print(g,end=" ")
+                                print("aaa[5]",end=" ")
+                                print(aaa[5])
+                                la = True    
+
+
+                            if do and re and mi and fa and so and la:
+                                Preceed = True
+                            else:
+                                Preceed = False
+                                
                             print(arduinoString)
                             print("")
 
-                     
+                        #with open("C:/Users/Leon/Desktop/DATA SHRIMP SEASON 2018/BASSIN 2/D.O/COPY_ME_TO_VIEW.CSV", 'a') as text_file:
+                            #text_file.write(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") + arduinoString + "\n")
+
+
+
+
+                        elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
+                             print("linux")
+
+
+
+
+
+
+
+                                   
+                        elif sys.platform.startswith('darwin') and a > 112 and a < 115:# THIS IS FOR MAC OS
+                            print("MAC OS")
+
+                            try:
+                                b = sys.getsizeof(aaa[0])
+                                print(b)
+                            except:
+                                print("data not correctly formatted")
+
+                            if b > 52 and b < 54: #53
+                                print(b,end=" ")
+                                print("aaa[0]",end=" ")
+                                print(aaa[0])
+                                do = True
+
+
+                            try:
+                                c = sys.getsizeof(aaa[1])
+                                print(c)
+                            except:
+                                print("data not correctly formatted")
+
+                            if c > 57 and c < 59: #58
+                                print(c,end=" ")
+                                print("aaa[1]",end=" ")
+                                print(aaa[1])
+                                re = True
+
+
+                            try:
+                                d = sys.getsizeof(aaa[2])
+                                print(d)
+                            except:
+                                print("data not correctly formatted")
+
+                            if d > 56 and d < 58: #57
+                                print(d,end=" ")
+                                print("aaa[2]",end=" ")
+                                print(aaa[2])
+                                mi = True
+
+                            try:
+                                e = sys.getsizeof(aaa[3])
+                                print(e)
+                            except:
+                                print("data not correctly formatted")
+
+                            if e > 56 and e < 58: # 57
+                                print(e,end=" ")
+                                print("aaa[3]",end=" ")
+                                print(aaa[3])
+                                fa = True
+
+                            try:
+                                f = sys.getsizeof(aaa[4])
+                                print(f)
+                            except:
+                                print("data not correctly formatted")
+
+                            if f > 57 and f < 59: #58
+                                print(f,end=" ")
+                                print("aaa[4]",end=" ")
+                                print(aaa[4])
+                                so = True
+
+
+                            if do and re and mi and fa and so:
+                                Preceed = True
+                            else:
+                                Preceed = False
+                                
+                            print(arduinoString)
+                            print("")
+
+
     ####################################################################  UPDATE SENSOR LABELS  ############################################################################################ 
     ####################################################################  UPDATE SENSOR LABELS  ############################################################################################ 
 
@@ -253,6 +820,17 @@ class Application(Frame):
                                 except:
                                     print("Error could not append sensor data")
 
+
+
+
+
+                    Preceed = False
+                    do = False
+                    re = False
+                    mi = False
+                    fa = False
+                    so = False
+                    la = False
 
                 except:
                     print("No data received")
